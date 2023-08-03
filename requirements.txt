@@ -2,4 +2,4 @@ fastapi
 uvicorn
 Jinja2
 python-multipart
-sklearn
+scikit-learn
