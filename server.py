@@ -36,8 +36,34 @@ def submit_bmi(request: Request, gender: str = Form(...), height: float = Form(.
     # x.extend(list(model['sd'].transform([[input['height'],input['weight']]])[0]))
     x.extend([input['height'], input['weight']])
     bmi = data[model['mn'].predict([x])[0]]
-    print(bmi)
-    return templates.TemplateResponse("result.html", {"request": request, "bmi": bmi})
+    red_weight = 0
+    inc_weight = 0
+    if bmi in ['Extremely Weak','Weak']:
+        for i in range(int(input['weight'])):
+            inc_weight = i
+            x = [model['lb'].fit_transform([input['gender']])[0]]
+            x.extend([input['height'], input['weight'] + i])
+            temp_bmi = data[model['mn'].predict([x])[0]]
+            if temp_bmi == 'Normal':
+                break
+
+    if bmi in ['Overweight','Obesity','Extreme Obesity']:
+        for i in range(int(input['weight'])):
+            red_weight = i
+            x = [model['lb'].fit_transform([input['gender']])[0]]
+            x.extend([input['height'], input['weight'] - i])
+            temp_bmi = data[model['mn'].predict([x])[0]]
+            if temp_bmi == 'Normal':
+                break
+
+    print(inc_weight,red_weight)
+    if inc_weight == 0:
+        message = 'You need to lose {} kg of weight.'.format(red_weight)
+    else:
+        message = 'You need to gain {} kg of weight.'.format(inc_weight)
+
+
+    return templates.TemplateResponse("result.html", {"request": request, "bmi": bmi,'message':message})
 
 
 
